@@ -14,26 +14,22 @@ from six.moves import urllib
 #%%
 dftrain = pd.read_csv('https://storage.googleapis.com/tf-datasets/titanic/train.csv') #/data/titanic/train.csv
 dfeval = pd.read_csv('https://storage.googleapis.com/tf-datasets/titanic/eval.csv') #/data/titanic/eval.csv
-y_train = dftrain.pop('deck')
-y_eval = dfeval.pop('deck')
+y_train = dftrain.pop('survived')
+y_eval = dfeval.pop('survived')
 
 #%%
-# .head() show the first five items in dataframe
-print(dftrain.head())
-print()
+CATEGORICAL_COLOUMS = ['sex', 'n_siblings_spouses', 'parch', 'class', 'deck', 'embark_town', 'alone']
 
-# .describe() statical analysis of our data
-print(dftrain.describe())
-print()
+NUMBERICAL_COLOUMS = ['age', 'fare']
 
-# .shape --> (row, coloumn)
-print(dftrain.shape)
-print()
+feature_coloums = []
+# %%
+for feature_name in CATEGORICAL_COLOUMS:
+    vocl = dftrain[feature_name].unique()
+    feature_coloums.append(tf.feature_column.categorical_column_with_vocabulary_list(feature_name, vocl))
 
-#%%
-dftrain.age.hist(bins=20)
+for feature_name in NUMBERICAL_COLOUMS:
+    feature_coloums.append(tf.feature_column.numeric_column(feature_name, dtype=tf.float32))
 
-#%%
-dftrain['class'].value_counts().plot(kind='barh')
-
+print(feature_coloums)
 # %%
